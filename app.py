@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 from config import Config
 import sqlite3
 import os
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
+app.secret_key = "supersecretkey"
 
 # Ensure required folders exist
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
@@ -42,9 +43,51 @@ def register():
         conn.commit()
         conn.close()
 
-        return redirect("/")
+        return redirect("/login")
 
     return render_template("register.html")
+
+
+# LOGIN ROUTE
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        conn = sqlite3.connect("instance/dresswell.db")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE email=?", (email,))
+        user = cursor.fetchone()
+
+        conn.close()
+
+        if user and check_password_hash(user[3], password):
+            session["user_id"] = user[0]
+            session["username"] = user[1]
+
+            return redirect("/dashboard")
+
+    return render_template("login.html")
+
+
+# DASHBOARD
+@app.route("/dashboard")
+def dashboard():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    return render_template("dashboard.html")
+
+
+# LOGOUT
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 if __name__ == "__main__":

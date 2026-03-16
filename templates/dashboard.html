@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="text-center mb-5">
+
+        <h2>Welcome {{ session.username }} 👋</h2>
+        <p class="text-muted">Manage your wardrobe and generate outfits.</p>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-4">
+                <h5>Upload Clothing</h5>
+                <p>Add new items to your wardrobe.</p>
+                <a href="/upload" class="btn btn-primary">Upload Item</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-4">
+                <h5>View Wardrobe</h5>
+                <p>See all your clothing items.</p>
+                <a href="/wardrobe" class="btn btn-secondary">Open Wardrobe</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-4">
+                <h5>Get Outfit</h5>
+                <p>Generate outfit recommendations.</p>
+                <a href="/recommendations" class="btn btn-success">Generate</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
